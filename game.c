@@ -67,40 +67,44 @@ void Enemy_destroy(struct Enemy *enemy){
 }
 
 // Take the damage dealt and subtract it from the Player's DEF
-void player_damage(struct Player *player, int damage, int critical_hit, int glancing_blow) {
+void player_damage(struct Player *player, int damage, int die_roll) {
     int new_damage = 0;
     
-    if(glancing_blow) {
-        new_damage = (int)(damage / 2) - player->defense;
-    } else {
-        new_damage = damage - player->defense;
-    }
+   switch(die_roll){
+        default:
+            new_damage = damage - player->defense;
+            break;
 
-    if (critical_hit) {
-        new_damage = (damage - player->defense)*2;
-    } else {
-        new_damage = damage - player->defense;
+        case 1:
+            new_damage = (damage - player->defense)*2;
+            break;
+ 
+        case 2:
+            new_damage = (int)(damage / 2) - player->defense;
+            break;
     }
     
     player->health -= new_damage;
 }
 
 // Take the damage dealt and subtract it from the Enemy's DEF
-void enemy_damage(struct Enemy *enemy, int damage, int critical_hit, int glancing_blow) {
+void enemy_damage(struct Enemy *enemy, int damage, int die_roll) {
     int new_damage = 0;
 
-    if(glancing_blow) {
-        new_damage = (int)(damage / 2) - enemy->defense;
-    } else {
-        new_damage = damage - enemy->defense;
+    switch(die_roll){
+        default:
+            new_damage = damage - enemy->defense;
+            break;
+
+        case 1:
+            new_damage = (damage - enemy->defense)*2;
+            break;
+ 
+        case 2:
+            new_damage = (int)(damage / 2) - enemy->defense;
+            break;
     }
-    
-    if (critical_hit) {
-        new_damage = (damage - enemy->defense)*2;
-    } else {
-        new_damage = damage - enemy->defense;
-    }
-    
+
     enemy->health -= new_damage;
 }
 
@@ -139,23 +143,23 @@ int main(int argv, char *argc[]) {
     // Endless loop; keep going until one of the characters is dead.
     while (1 == 1) {
         // Player's turn
-        int player_critical_hit = rand() % 2;
-        int player_glancing_blow = rand() % 2;
+        int player_die_roll = rand() % 3;
 
-        char player_message[80];
-        strcpy(player_message, "You attack!\n");
-        
-        if(player_critical_hit) {
-            strcat(player_message, "Critical hit!\n");
+        switch(player_die_roll){
+            default:
+                printf("You attack!\n");
+                break;
+
+            case 1:
+                printf("You attack!\nCritical hit!\n");
+                break;
+
+            case 2:
+                printf("You attack!\nYou only land a glancing blow!!\n");
+                break;
         }
 
-        if(player_glancing_blow) {
-            strcat(player_message, "You only land a glancing blow!!\n");   
-        }
-
-        printf("%s", player_message);
-        
-        enemy_damage(enemy, player->attack, player_critical_hit, player_glancing_blow);
+        enemy_damage(enemy, player->attack, player_die_roll);
         
         // Check if we killed it
         int dead_enemy = check_enemy_death(enemy);
@@ -166,24 +170,23 @@ int main(int argv, char *argc[]) {
         printf("Your enemy's health is %d.\n\n", enemy->health);
         
         // Enemy's turn.
-        int enemy_critical_hit = rand() % 2;
-        int enemy_glancing_blow = rand() % 2;
+        int enemy_die_roll = rand() % 3;
 
-        char enemy_message[80];
+        switch(enemy_die_roll){
+            default:
+                printf("The enemy attacks!\n");
+                break;
 
-        strcpy(enemy_message, "The enemy attacks!\n");
-        
-         if(enemy_critical_hit) {
-            strcat(enemy_message, "Critical hit!\n");
+            case 1:
+                printf("The enemy attacks!\nCritical hit!\n");
+                break;
+
+            case 2:
+                printf("The enemy attacks!\nThey only land a glancing blow!!\n");
+                break;
         }
-
-        if(enemy_glancing_blow) {
-            strcat(enemy_message, "The enemy only lands a glancing blow!!\n");   
-        }
-
-        printf("%s", enemy_message);
         
-        player_damage(player, enemy->attack, enemy_critical_hit, enemy_glancing_blow);
+        player_damage(player, enemy->attack, enemy_die_roll);
         
         // Check if the enemy killed the player
         int dead_player = check_player_death(player);
