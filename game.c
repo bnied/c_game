@@ -1,3 +1,7 @@
+/* © 2013 Benjamin Nied
+ * This is a same program designed to simulate a battle between two entities
+ */
+
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
