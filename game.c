@@ -8,9 +8,11 @@
 #include <errno.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 #define NAME_LENGTH 40
 
+// Declarations
 struct Player {
 	char *name;
 	int health;
@@ -27,6 +29,7 @@ struct Enemy {
     int dead;
 };
 
+// Struct methods; create/destroy our player and the enemy
 struct Player *Player_create(char *name) {
     struct Player *player = malloc(sizeof(struct Player));
     assert(player != NULL);
@@ -42,8 +45,6 @@ struct Player *Player_create(char *name) {
 
 void Player_destroy(struct Player *player){
     assert(player != NULL);
-    
-    free(player->name);
     free(player);
 }
 
@@ -62,12 +63,14 @@ struct Enemy *Enemy_create() {
 
 void Enemy_destroy(struct Enemy *enemy){
     assert(enemy != NULL);
-    
-    free(enemy->name);
     free(enemy);
 }
 
-// Take the damage dealt and subtract it from the Player's DEF
+/* The die roll determines what kind of damage we take:
+ * - Normal (0): Health - (ATK - DEF)
+ * - Critical (1): (Health - (ATK - DEF)) * 2
+ * - Glancing (2): (Health - (ATK - DEF)) / 2
+ */
 void player_damage(struct Player *player, int damage, int die_roll) {
     int new_damage = 0;
     
@@ -88,7 +91,11 @@ void player_damage(struct Player *player, int damage, int die_roll) {
     player->health -= new_damage;
 }
 
-// Take the damage dealt and subtract it from the Enemy's DEF
+/* The die roll determines what kind of damage we do:
+ * - Normal (0): Health - (ATK - DEF)
+ * - Critical (1): (Health - (ATK - DEF)) * 2
+ * - Glancing (2): (Health - (ATK - DEF)) / 2
+ */
 void enemy_damage(struct Enemy *enemy, int damage, int die_roll) {
     int new_damage = 0;
 
@@ -129,20 +136,24 @@ int check_enemy_death(struct Enemy *enemy){
     }
 }
 
-int main(int argv, char *argc[]) {
+int main(int argc, char *argv[]) {
     // Setup; get the player's name and generate our characters
     char input[NAME_LENGTH];
     printf("Hello and welcome! What is your name?\n");
     char *name = fgets(input, NAME_LENGTH, stdin);
     struct Player *player = Player_create(name);
     struct Enemy *enemy = Enemy_create();
+    
+    // DEBUG
+    printf("Player's Memory Location: %p.\n", player);
+    printf("Enemy's Memory Location: %p.\n", enemy);
 
     // Seed our RNG
     srand(time(NULL));
     
     // Start the game. The introduction...
-    printf("Oh no, an enemy!\n");
-    printf("Your current health is %d.\nYour enemy's health is %d.\n\n", player->health, enemy->health);
+    printf("An enemy approaches...\n");
+    printf("You and your enemy both start with 100 health.\n\n");
     
     // Endless loop; keep going until one of the characters is dead.
     while (1 == 1) {
@@ -168,10 +179,13 @@ int main(int argv, char *argc[]) {
         // Check if we killed it
         int dead_enemy = check_enemy_death(enemy);
         if (dead_enemy) {
-            printf("You killed him! You win, %s!", player->name);
+            printf("You killed the enemy! You win, %s.", player->name);
             break;
         }
-        printf("Your enemy's health is %d.\n\n", enemy->health);
+        printf("The enemy's health is now %d.\n\n", enemy->health);
+        
+        // Give the player a chance to read up
+        sleep(1);
         
         // Enemy's turn.
         int enemy_die_roll = rand() % 3;
@@ -195,11 +209,25 @@ int main(int argv, char *argc[]) {
         // Check if the enemy killed the player
         int dead_player = check_player_death(player);
         if (dead_player) {
-            printf("The enemy has killed you! You lose, %s!", player->name);
+            printf("The enemy has killed you! You lose, %s.", player->name);
+            sleep(2);
             break;
         }
-        printf("Your current health is %d.\n\n", player->health);
+        printf("Your health is now %d.\n\n", player->health);
+        
+        // Give the player a chance to read up.
+        sleep(1);
+        
+        // Clear the screen
+        int height = 80;
+        int i;
+        
+        for (i = 0; i < height; i++) {
+            printf("\n");
+        }
     }
-    
+
+    Player_destroy(player);
+    Enemy_destroy(enemy);
     return 0;
 }
