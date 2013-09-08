@@ -52,8 +52,8 @@ struct Enemy *Enemy_create() {
     
     enemy->name = "Bad Guy";
     enemy->health = 50;
-    enemy->attack = 10;
-    enemy->defense = 3;
+    enemy->attack = 7;
+    enemy->defense = 4;
     enemy->dead = 0;
     
     return enemy;
@@ -67,11 +67,17 @@ void Enemy_destroy(struct Enemy *enemy){
 }
 
 // Take the damage dealt and subtract it from the Player's DEF
-void player_damage(struct Player *player, int damage, int glancing_blow) {
+void player_damage(struct Player *player, int damage, int critical_hit, int glancing_blow) {
     int new_damage = 0;
     
     if(glancing_blow) {
         new_damage = (int)(damage / 2) - player->defense;
+    } else {
+        new_damage = damage - player->defense;
+    }
+
+    if (critical_hit) {
+        new_damage = (damage - player->defense)*2;
     } else {
         new_damage = damage - player->defense;
     }
@@ -80,8 +86,14 @@ void player_damage(struct Player *player, int damage, int glancing_blow) {
 }
 
 // Take the damage dealt and subtract it from the Enemy's DEF
-void enemy_damage(struct Enemy *enemy, int damage, int critical_hit) {
+void enemy_damage(struct Enemy *enemy, int damage, int critical_hit, int glancing_blow) {
     int new_damage = 0;
+
+    if(glancing_blow) {
+        new_damage = (int)(damage / 2) - enemy->defense;
+    } else {
+        new_damage = damage - enemy->defense;
+    }
     
     if (critical_hit) {
         new_damage = (damage - enemy->defense)*2;
@@ -113,26 +125,37 @@ int check_enemy_death(struct Enemy *enemy){
 }
 
 int main(int argv, char *argc[]) {
+    // Setup; get the player's name and generate our characters
     char input[NAME_LENGTH];
     printf("Hello and welcome! What is your name?\n");
     char *name = fgets(input, NAME_LENGTH, stdin);
     struct Player *player = Player_create(name);
     struct Enemy *enemy = Enemy_create();
     
+    // Start the game. The introduction...
     printf("Oh no, an enemy!\n");
     printf("Your current health is %d.\nYour enemy's health is %d.\n\n", player->health, enemy->health);
     
+    // Endless loop; keep going until one of the characters is dead.
     while (1 == 1) {
         // Player's turn
-        int critical_hit = rand() % 2;
+        int player_critical_hit = rand() % 2;
+        int player_glancing_blow = rand() % 2;
+
+        char player_message[80];
+        strcpy(player_message, "You attack!\n");
         
-        if(critical_hit) {
-            printf("You attack! Critical hit!\n");
-        } else {
-            printf("You attack!\n");
+        if(player_critical_hit) {
+            strcat(player_message, "Critical hit!\n");
         }
+
+        if(player_glancing_blow) {
+            strcat(player_message, "You only land a glancing blow!!\n");   
+        }
+
+        printf("%s", player_message);
         
-        enemy_damage(enemy, player->attack, critical_hit);
+        enemy_damage(enemy, player->attack, player_critical_hit, player_glancing_blow);
         
         // Check if we killed it
         int dead_enemy = check_enemy_death(enemy);
@@ -143,16 +166,24 @@ int main(int argv, char *argc[]) {
         printf("Your enemy's health is %d.\n\n", enemy->health);
         
         // Enemy's turn.
+        int enemy_critical_hit = rand() % 2;
+        int enemy_glancing_blow = rand() % 2;
+
+        char enemy_message[80];
+
+        strcpy(enemy_message, "The enemy attacks!\n");
         
-        int glancing_blow = rand() % 2;
-        
-        if(glancing_blow){
-            printf("The enemy attacks, but only lands a glancing blow!\n");
-        } else {
-            printf("The enemy attacks!\n");
+         if(enemy_critical_hit) {
+            strcat(enemy_message, "Critical hit!\n");
         }
+
+        if(enemy_glancing_blow) {
+            strcat(enemy_message, "The enemy only lands a glancing blow!!\n");   
+        }
+
+        printf("%s", enemy_message);
         
-        player_damage(player, enemy->attack, glancing_blow);
+        player_damage(player, enemy->attack, enemy_critical_hit, enemy_glancing_blow);
         
         // Check if the enemy killed the player
         int dead_player = check_player_death(player);
