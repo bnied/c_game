@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <time.h>
 
 #define NAME_LENGTH 40
 
@@ -51,9 +52,9 @@ struct Enemy *Enemy_create() {
     assert(enemy != NULL);
     
     enemy->name = "Bad Guy";
-    enemy->health = 50;
-    enemy->attack = 7;
-    enemy->defense = 4;
+    enemy->health = 100;
+    enemy->attack = 5;
+    enemy->defense = 2;
     enemy->dead = 0;
     
     return enemy;
@@ -135,6 +136,9 @@ int main(int argv, char *argc[]) {
     char *name = fgets(input, NAME_LENGTH, stdin);
     struct Player *player = Player_create(name);
     struct Enemy *enemy = Enemy_create();
+
+    // Seed our RNG
+    srand(time(NULL));
     
     // Start the game. The introduction...
     printf("Oh no, an enemy!\n");
