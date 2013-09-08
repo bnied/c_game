@@ -7,7 +7,7 @@
 #define NAME_LENGTH 40
 
 struct Player {
-	char name;
+	char *name;
 	int health;
 	int attack;
 	int defense;
@@ -15,7 +15,7 @@ struct Player {
 };
 
 struct Enemy {
-	char name;
+	char *name;
 	int health;
 	int attack;
 	int defense;
@@ -111,7 +111,7 @@ int check_enemy_death(struct Enemy *enemy){
 int main(int argv, char *argc[]) {
     char input[NAME_LENGTH];
     printf("Hello and welcome! What is your name?\n");
-    char name = fgets(input, NAME_LENGTH, stdin);
+    char *name = fgets(input, NAME_LENGTH, stdin);
     struct Player *player = Player_create(name);
     struct Enemy *enemy = Enemy_create();
     
@@ -133,7 +133,7 @@ int main(int argv, char *argc[]) {
         // Check if we killed it
         int dead_enemy = check_enemy_death(enemy);
         if (dead_enemy) {
-            printf("You killed him! You win!");
+            printf("You killed him! You win, %s!", player->name);
             break;
         }
         printf("Your enemy's health is %d.\n\n", enemy->health);
@@ -153,7 +153,7 @@ int main(int argv, char *argc[]) {
         // Check if the enemy killed the player
         int dead_player = check_player_death(player);
         if (dead_player) {
-            printf("The enemy has killed you! You lose!");
+            printf("The enemy has killed you! You lose, %s!", player->name);
             break;
         }
         printf("Your current health is %d.\n\n", player->health);
