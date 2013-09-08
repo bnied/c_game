@@ -66,7 +66,7 @@ void Enemy_destroy(struct Enemy *enemy){
 void player_damage(struct Player *player, int damage, int glancing_blow) {
     int new_damage = 0;
     
-    if(glancing_blow > 4) {
+    if(glancing_blow) {
         new_damage = (int)(damage / 2) - player->defense;
     } else {
         new_damage = damage - player->defense;
@@ -140,9 +140,9 @@ int main(int argv, char *argc[]) {
         
         // Enemy's turn.
         
-        int glancing_blow = rand() % 8;
+        int glancing_blow = rand() % 2;
         
-        if(glancing_blow > 4){
+        if(glancing_blow){
             printf("The enemy attacks, but only lands a glancing blow!\n");
         } else {
             printf("The enemy attacks!\n");
