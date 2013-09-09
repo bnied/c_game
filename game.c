@@ -1,5 +1,5 @@
 /* © 2013 Benjamin Nied
- * This is a same program designed to simulate a battle between two entities
+ * This is a game program designed to simulate a battle between two entities
  */
 
 #include <stdio.h>
