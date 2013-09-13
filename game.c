@@ -138,9 +138,10 @@ int check_enemy_death(struct Enemy *enemy){
 
 int main(int argc, char *argv[]) {
     // Setup; get the player's name and generate our characters
-    char input[NAME_LENGTH];
+    char name_input[NAME_LENGTH];
+    char attack_choice[1];
     printf("Hello and welcome! What is your name?\n");
-    char *name = fgets(input, NAME_LENGTH, stdin);
+    char *name = fgets(name_input, NAME_LENGTH, stdin);
     struct Player *player = Player_create(name);
     struct Enemy *enemy = Enemy_create();
     
@@ -159,6 +160,14 @@ int main(int argc, char *argv[]) {
     while (1 == 1) {
         // Player's turn
         int player_die_roll = rand() % 3;
+
+        printf("Which attack would you like to use?\n\n");
+        printf("1 - Punch (3 dmg)\n");
+        printf("2 - Kick (5 dmg)\n");
+        printf("3 - Knife (10 dmg)\n\n");
+
+        char *attack = fgets(attack_choice, 1, stdin);
+
 
         switch(player_die_roll){
             default:
