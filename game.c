@@ -203,9 +203,9 @@ int main(int argc, char *argv[]) {
         int player_critical_roll = rand() % 3;
 
         printf("Which attack would you like to use?\n\n");
-        printf("1 - Punch (3 dmg)\n");
-        printf("2 - Kick (5 dmg)\n");
-        printf("3 - Knife (10 dmg)\n\n");
+        printf("1 - Punch (3 DMG - DEF)\n");
+        printf("2 - Kick (5 DMG - DEF)\n");
+        printf("3 - Knife (10 DMG - DEF)\n\n");
 
         scanf("%d", &attack_choice);
 
@@ -228,7 +228,7 @@ int main(int argc, char *argv[]) {
 
         enemy_damage(enemy, player->attack, player_critical_roll);
         
-        // Check if we killed it
+        // If the enemy is dead, break the loop and end the game.
         int dead_enemy = check_enemy_death(enemy);
         if (dead_enemy) {
             printf("You killed the enemy! You win, %s.", player->name);
@@ -236,10 +236,10 @@ int main(int argc, char *argv[]) {
         }
         printf("The enemy's health is now %d.\n\n", enemy->health);
         
-        // Give the player a chance to read up
+        // Give the player a chance to read up.
         sleep(1);
         
-        // Enemy's turn. Two rolls: one for crit and one for attack damage
+        // Enemy's turn. Two rolls: one for crit and one for attack damage.
         int enemy_critical_roll = rand() % 3;
         int enemy_attack_roll = rand() % 3;
 
@@ -259,7 +259,7 @@ int main(int argc, char *argv[]) {
         
         player_damage(player, enemy->attack, enemy_critical_roll);
         
-        // Check if the enemy killed the player
+        // If the enemy killed the player, break the loop and quit the game.
         int dead_player = check_player_death(player);
         if (dead_player) {
             printf("The enemy has killed you! You lose, %s.", player->name);
