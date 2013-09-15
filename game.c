@@ -11,6 +11,7 @@
 #include <unistd.h>
 
 #define NAME_LENGTH 40
+#define SCREEN_ROWS 100
 
 // Declarations
 struct Player {
@@ -52,13 +53,20 @@ struct Enemy *Enemy_create() {
     struct Enemy *enemy = malloc(sizeof(struct Enemy));
     assert(enemy != NULL);
     
-    enemy->name = "Bad Guy";
+    enemy->name = "The Bad Guy";
     enemy->health = 100;
     enemy->attack = 5;
     enemy->defense = 2;
     enemy->dead = 0;
     
     return enemy;
+}
+
+void Enemy_print(struct Enemy *enemy) {
+	printf("Name: %s\n", enemy->name);
+	printf("Health: %d\n", enemy->health);
+	printf("ATK: %d\n", enemy->attack);
+	printf("DEF: %d\n", enemy->defense);
 }
 
 void Enemy_destroy(struct Enemy *enemy){
@@ -72,10 +80,10 @@ void Enemy_destroy(struct Enemy *enemy){
  * - Glancing (2): (Health - (ATK - DEF)) / 2
  */
 void player_damage(struct Player *player, int damage, int die_roll) {
-    int new_damage = 0;
+	int new_damage;
     
-   switch(die_roll){
-        default:
+	switch(die_roll){
+    	default:
             new_damage = damage - player->defense;
             break;
 
@@ -87,8 +95,9 @@ void player_damage(struct Player *player, int damage, int die_roll) {
             new_damage = (int)(damage / 2) - player->defense;
             break;
     }
-    
-    player->health -= new_damage;
+    if(new_damage > 0){
+    	player->health -= new_damage;
+    }
 }
 
 /* The die roll determines what kind of damage we do:
@@ -97,23 +106,27 @@ void player_damage(struct Player *player, int damage, int die_roll) {
  * - Glancing (2): (Health - (ATK - DEF)) / 2
  */
 void enemy_damage(struct Enemy *enemy, int damage, int die_roll) {
-    int new_damage = 0;
+    int new_damage;
 
     switch(die_roll){
         default:
             new_damage = damage - enemy->defense;
+            printf("You attack for %d damage!\n", new_damage);
             break;
 
         case 1:
             new_damage = (damage - enemy->defense)*2;
+            printf("Critical hit!\nYou attack for %d damage!\n", new_damage);
             break;
  
         case 2:
             new_damage = (int)(damage / 2) - enemy->defense;
+            printf("Your blow glances off the enemy and only causes %d damage!\n", new_damage);
             break;
     }
-
-    enemy->health -= new_damage;
+    if(new_damage > 0) {
+    	enemy->health -= new_damage;
+    }
 }
 
 // Check if our player is dead
@@ -136,28 +149,40 @@ int check_enemy_death(struct Enemy *enemy){
     }
 }
 
+// Clear the screen
+void clear_screen() {
+	// Clear the screen
+    for (int i = 0; i < SCREEN_ROWS; i++) {
+    	printf("\n");
+    }
+}
+
 int main(int argc, char *argv[]) {
     // Setup; get the player's name and generate our characters
     char name_input[NAME_LENGTH];
-    char attack_choice[1];
+    int attack_choice;
     printf("Hello and welcome! What is your name?\n");
     char *name = fgets(name_input, NAME_LENGTH, stdin);
     struct Player *player = Player_create(name);
     struct Enemy *enemy = Enemy_create();
     
     // DEBUG
-    printf("Player's Memory Location: %p.\n", player);
-    printf("Enemy's Memory Location: %p.\n", enemy);
+    //printf("Player's Memory Location: %p.\n", player);
+    //printf("Enemy's Memory Location: %p.\n", enemy);
 
     // Seed our RNG
     srand(time(NULL));
     
     // Start the game. The introduction...
     printf("An enemy approaches...\n");
-    printf("You and your enemy both start with 100 health.\n\n");
+    printf("Your enemy's statistics:\n");
+    Enemy_print(enemy);
+    sleep(10);
+
+    clear_screen();
     
     // Endless loop; keep going until one of the characters is dead.
-    while (1 == 1) {
+    while (1) {
         // Player's turn
         int player_die_roll = rand() % 3;
 
@@ -166,20 +191,22 @@ int main(int argc, char *argv[]) {
         printf("2 - Kick (5 dmg)\n");
         printf("3 - Knife (10 dmg)\n\n");
 
-        char *attack = fgets(attack_choice, 1, stdin);
+        scanf("%d", &attack_choice);
 
-
-        switch(player_die_roll){
+        switch(attack_choice) {
             default:
-                printf("You attack!\n");
-                break;
-
-            case 1:
-                printf("You attack!\nCritical hit!\n");
+                printf("Punch selected.\n");
+                player->attack = 3;
                 break;
 
             case 2:
-                printf("You attack!\nYou only land a glancing blow!!\n");
+            	printf("Kick selected.\n");
+                player->attack = 5;
+                break;
+
+            case 3:
+            	printf("Knife selected.\n");
+                player->attack = 10;
                 break;
         }
 
@@ -227,13 +254,7 @@ int main(int argc, char *argv[]) {
         // Give the player a chance to read up.
         sleep(1);
         
-        // Clear the screen
-        int height = 80;
-        int i;
-        
-        for (i = 0; i < height; i++) {
-            printf("\n");
-        }
+        clear_screen();
     }
 
     Player_destroy(player);
