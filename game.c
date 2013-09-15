@@ -49,6 +49,13 @@ void Player_destroy(struct Player *player){
     free(player);
 }
 
+void Player_print(struct Player *player) {
+	printf("Name: %s", player->name);
+	printf("Health: %d\n", player->health);
+	printf("ATK: %d\n", player->attack);
+	printf("DEF: %d\n\n", player->defense);
+}
+
 struct Enemy *Enemy_create() {
     struct Enemy *enemy = malloc(sizeof(struct Enemy));
     assert(enemy != NULL);
@@ -62,16 +69,16 @@ struct Enemy *Enemy_create() {
     return enemy;
 }
 
+void Enemy_destroy(struct Enemy *enemy){
+    assert(enemy != NULL);
+    free(enemy);
+}
+
 void Enemy_print(struct Enemy *enemy) {
 	printf("Name: %s\n", enemy->name);
 	printf("Health: %d\n", enemy->health);
 	printf("ATK: %d\n", enemy->attack);
-	printf("DEF: %d\n", enemy->defense);
-}
-
-void Enemy_destroy(struct Enemy *enemy){
-    assert(enemy != NULL);
-    free(enemy);
+	printf("DEF: %d\n\n", enemy->defense);
 }
 
 /* The die roll determines what kind of damage we take:
@@ -85,14 +92,17 @@ void player_damage(struct Player *player, int damage, int die_roll) {
 	switch(die_roll){
     	default:
             new_damage = damage - player->defense;
+            printf("The enemy attacks for %d damage!\n", new_damage);
             break;
 
         case 1:
             new_damage = (damage - player->defense)*2;
+            printf("Critical hit!\nYour enemy attacks for %d damage!\n", new_damage);
             break;
  
         case 2:
             new_damage = (int)(damage / 2) - player->defense;
+            printf("Your enemy's blow glances off you and only causes %d damage!\n", new_damage);
             break;
     }
     if(new_damage > 0){
@@ -172,19 +182,25 @@ int main(int argc, char *argv[]) {
 
     // Seed our RNG
     srand(time(NULL));
+
+    // Clear the screen and show the player/enemy stats
+    clear_screen();
     
     // Start the game. The introduction...
     printf("An enemy approaches...\n");
     printf("Your enemy's statistics:\n");
     Enemy_print(enemy);
-    sleep(10);
+    printf("Your statistics:\n");
+    Player_print(player);
+    sleep(5);
 
+    // Now clear the screen and begin the game proper
     clear_screen();
     
     // Endless loop; keep going until one of the characters is dead.
     while (1) {
         // Player's turn
-        int player_die_roll = rand() % 3;
+        int player_critical_roll = rand() % 3;
 
         printf("Which attack would you like to use?\n\n");
         printf("1 - Punch (3 dmg)\n");
@@ -210,7 +226,7 @@ int main(int argc, char *argv[]) {
                 break;
         }
 
-        enemy_damage(enemy, player->attack, player_die_roll);
+        enemy_damage(enemy, player->attack, player_critical_roll);
         
         // Check if we killed it
         int dead_enemy = check_enemy_death(enemy);
@@ -223,24 +239,25 @@ int main(int argc, char *argv[]) {
         // Give the player a chance to read up
         sleep(1);
         
-        // Enemy's turn.
-        int enemy_die_roll = rand() % 3;
+        // Enemy's turn. Two rolls: one for crit and one for attack damage
+        int enemy_critical_roll = rand() % 3;
+        int enemy_attack_roll = rand() % 3;
 
-        switch(enemy_die_roll){
+        switch(enemy_attack_roll) {
             default:
-                printf("The enemy attacks!\n");
+                enemy->attack = 3;
                 break;
 
             case 1:
-                printf("The enemy attacks!\nCritical hit!\n");
+                enemy->attack = 5;
                 break;
 
             case 2:
-                printf("The enemy attacks!\nThey only land a glancing blow!!\n");
+                enemy->attack = 10;
                 break;
         }
         
-        player_damage(player, enemy->attack, enemy_die_roll);
+        player_damage(player, enemy->attack, enemy_critical_roll);
         
         // Check if the enemy killed the player
         int dead_player = check_player_death(player);
@@ -254,7 +271,7 @@ int main(int argc, char *argv[]) {
         // Give the player a chance to read up.
         sleep(1);
         
-        clear_screen();
+        //clear_screen();
     }
 
     Player_destroy(player);
