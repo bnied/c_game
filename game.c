@@ -18,7 +18,8 @@
 // Clear the screen
 void clear_screen() {
 	// Clear the screen
-	for (int i = 0; i < SCREEN_ROWS; i++) {
+	int i;
+	for (i = 0; i < SCREEN_ROWS; i++) {
 		printf("\n");
 	}
 }
