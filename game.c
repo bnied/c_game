@@ -9,26 +9,10 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include "game.h"
 
 #define NAME_LENGTH 40
 #define SCREEN_ROWS 100
-
-// Declarations
-struct Player {
-    char *name;
-    int health;
-    int attack;
-    int defense;
-    int dead;
-};
-
-struct Enemy {
-    char *name;
-    int health;
-    int attack;
-    int defense;
-    int dead;
-};
 
 // Struct methods; create/destroy our player and the enemy
 struct Player *Player_create(char *name) {
