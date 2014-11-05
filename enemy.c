@@ -11,11 +11,11 @@ struct Enemy *Enemy_create() {
 	struct Enemy *enemy = malloc(sizeof(struct Enemy));
 	assert(enemy != NULL);
 	
-	enemy->name = "The Bad Guy";
-	enemy->health = 100;
-	enemy->attack = 5;
-	enemy->defense = 2;
-	enemy->dead = 0;
+	enemy->name    = "The Bad Guy";
+	enemy->health  = (rand() % 100) * 3;
+	enemy->attack  = rand() % 5;
+	enemy->defense = rand() % 2;
+	enemy->dead    = 0;
 	
 	return enemy;
 }
@@ -53,6 +53,9 @@ void enemy_damage(struct Enemy *enemy, int damage, int die_roll) {
  
 		case 2:
 			new_damage = (int)(damage / 2) - enemy->defense;
+			if (new_damage < 0) {
+				new_damage = 0;
+			}
 			printf("Your blow glances off the enemy and only causes %d damage!\n", new_damage);
 			break;
 	}

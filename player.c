@@ -12,11 +12,11 @@ struct Player *Player_create(char *name) {
 	struct Player *player = malloc(sizeof(struct Player));
 	assert(player != NULL);
 	
-	player->name = name;
-	player->health = 100;
-	player->attack = 5;
+	player->name    = name;
+	player->health  = 100;
+	player->attack  = 5;
 	player->defense = 2;
-	player->dead = 0;
+	player->dead    = 0;
 	
 	return player;
 }
@@ -54,6 +54,9 @@ void player_damage(struct Player *player, int damage, int die_roll) {
  
 		case 2:
 			new_damage = (int)(damage / 2) - player->defense;
+			if (new_damage < 0) {
+				new_damage = 0;
+			}
 			printf("Your enemy's blow glances off you and only causes %d damage!\n", new_damage);
 			break;
 	}

@@ -27,7 +27,6 @@ void clear_screen() {
 int main(int argc, char *argv[]) {
 	// Setup; get the player's name and generate our characters
 	char name_input[NAME_LENGTH];
-	int attack_choice;
 	printf("Hello and welcome! What is your name?\n");
 	char *name = fgets(name_input, NAME_LENGTH, stdin);
 	struct Player *player = Player_create(name);
@@ -58,27 +57,18 @@ int main(int argc, char *argv[]) {
 	while (1) {
 		// Player's turn
 		int player_critical_roll = rand() % 3;
+		int player_attack_roll = rand() % 3;
 
-		printf("Which attack would you like to use?\n\n");
-		printf("1 - Punch (3 DMG - DEF)\n");
-		printf("2 - Kick (5 DMG - DEF)\n");
-		printf("3 - Knife (10 DMG - DEF)\n\n");
-
-		scanf("%d", &attack_choice);
-
-		switch(attack_choice) {
+		switch(player_attack_roll) {
 			default:
-				printf("Punch selected.\n");
 				player->attack = 3;
 				break;
 
 			case 2:
-				printf("Kick selected.\n");
 				player->attack = 5;
 				break;
 
 			case 3:
-				printf("Knife selected.\n");
 				player->attack = 10;
 				break;
 		}
