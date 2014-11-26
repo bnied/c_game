@@ -9,6 +9,9 @@
 
 // Struct methods; create/destroy our player and the enemy
 struct Player *Player_create(char *name) {
+  // Seed our RNG
+  srand(time(NULL));
+
   struct Player *player = malloc(sizeof(struct Player));
   assert(player != NULL);
 

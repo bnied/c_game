@@ -8,6 +8,9 @@
 #include "enemy.h"
 
 struct Enemy *Enemy_create() {
+  // Seed our RNG
+  srand(time(NULL));
+
   struct Enemy *enemy = malloc(sizeof(struct Enemy));
   assert(enemy != NULL);
 
