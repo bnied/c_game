@@ -13,7 +13,7 @@
 #include "enemy.h"
 
 #define NAME_LENGTH 40
-#define SCREEN_ROWS 100
+#define SCREEN_ROWS 80
 
 // Clear the screen
 void clear_screen() {
@@ -24,19 +24,21 @@ void clear_screen() {
 }
 
 int main(int argc, char *argv[]) {
-  // Seed our RNG
-  srand(time(NULL));
-
   // Setup; get the player's name and generate our characters
   char name_input[NAME_LENGTH];
   printf("Hello and welcome! What is your name?\n");
   char *name = fgets(name_input, NAME_LENGTH, stdin);
   struct Player *player = Player_create(name);
   struct Enemy *enemy = Enemy_create();
+
+  // Seed our RNG
+  srand(time(NULL));
   
   // DEBUG
-  //printf("Player's Memory Location: %p.\n", player);
-  //printf("Enemy's Memory Location: %p.\n", enemy);
+  printf("Time: %lu\n", time(NULL));
+  printf("Player's Memory Location: %p.\n", player);
+  printf("Enemy's Memory Location: %p.\n", enemy);
+  sleep(5);
 
   // Clear the screen and show the player/enemy stats
   clear_screen();
