@@ -1,9 +1,9 @@
 struct Enemy {
-	char *name;
-	int health;
-	int attack;
-	int defense;
-	int dead;
+  char *name;
+  int health;
+  int attack;
+  int defense;
+  int dead;
 };
 
 struct Enemy *Enemy_create();

@@ -8,28 +8,28 @@
 #include "enemy.h"
 
 struct Enemy *Enemy_create() {
-	struct Enemy *enemy = malloc(sizeof(struct Enemy));
-	assert(enemy != NULL);
-	
-	enemy->name    = "The Bad Guy";
-	enemy->health  = (rand() % 100) * 3;
-	enemy->attack  = rand() % 5;
-	enemy->defense = rand() % 2;
-	enemy->dead    = 0;
-	
-	return enemy;
+  struct Enemy *enemy = malloc(sizeof(struct Enemy));
+  assert(enemy != NULL);
+
+  enemy->name    = "The Bad Guy";
+  enemy->health  = (rand() % 25) * 4;
+  enemy->attack  = rand() % 5;
+  enemy->defense = rand() % 4;
+  enemy->dead    = 0;
+
+  return enemy;
 }
 
 void Enemy_destroy(struct Enemy *enemy){
-	assert(enemy != NULL);
-	free(enemy);
+  assert(enemy != NULL);
+  free(enemy);
 }
 
 void Enemy_print(struct Enemy *enemy) {
-	printf("Name: %s\n", enemy->name);
-	printf("Health: %d\n", enemy->health);
-	printf("ATK: %d\n", enemy->attack);
-	printf("DEF: %d\n\n", enemy->defense);
+  printf("Name: %s\n", enemy->name);
+  printf("Health: %d\n", enemy->health);
+  printf("ATK: %d\n", enemy->attack);
+  printf("DEF: %d\n\n", enemy->defense);
 }
 
 /* The die roll determines what kind of damage we do:
@@ -38,38 +38,40 @@ void Enemy_print(struct Enemy *enemy) {
  * - Glancing (2): (Health - (ATK - DEF)) / 2
  */
 void enemy_damage(struct Enemy *enemy, int damage, int die_roll) {
-	int new_damage;
+  float multiplier = 1.0;
 
-	switch(die_roll){
-		default:
-			new_damage = damage - enemy->defense;
-			printf("You attack for %d damage!\n", new_damage);
-			break;
+  switch(die_roll) {
+    default:
+      multiplier = 1.0;
+      break;
 
-		case 1:
-			new_damage = (damage - enemy->defense)*2;
-			printf("Critical hit!\nYou attack for %d damage!\n", new_damage);
-			break;
- 
-		case 2:
-			new_damage = (int)(damage / 2) - enemy->defense;
-			if (new_damage < 0) {
-				new_damage = 0;
-			}
-			printf("Your blow glances off the enemy and only causes %d damage!\n", new_damage);
-			break;
-	}
-	if(new_damage > 0) {
-		enemy->health -= new_damage;
-	}
+    case 1:
+      multiplier = 2.0;
+      printf("CRITICAL HIT: ");
+      break;
+
+    case 2:
+      multiplier = 0.5;
+      printf("GLANCING BLOW: ");
+      break;
+  }
+
+  int final_damage = (int)(damage * multiplier) - enemy->defense;
+
+  if (final_damage > 0) {
+    printf("You attack for %d damage!\n", final_damage);
+    enemy->health -= final_damage;
+  } else {
+    printf("Your attack causes no damage.\n");
+  }
 }
 
 // Check if our enemy is dead
 int check_enemy_death(struct Enemy *enemy){
-	if(enemy->health <= 0) {
-		enemy->dead = 1;
-		return 1;
-	} else {
-		return 0;
-	}
+  if(enemy->health <= 0) {
+    enemy->dead = 1;
+    return 1;
+  } else {
+    return 0;
+  }
 }

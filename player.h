@@ -1,9 +1,9 @@
 struct Player {
-	char *name;
-	int health;
-	int attack;
-	int defense;
-	int dead;
+  char *name;
+  int health;
+  int attack;
+  int defense;
+  int dead;
 };
 
 struct Player *Player_create(char *name);
