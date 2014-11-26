@@ -15,9 +15,9 @@ struct Enemy *Enemy_create() {
   assert(enemy != NULL);
 
   enemy->name    = "The Bad Guy";
-  enemy->health  = (rand() % 25) * 4;
-  enemy->attack  = rand() % 5;
-  enemy->defense = rand() % 4;
+  enemy->health  = ((rand() % 25) * 4) + 1;
+  enemy->attack  = (rand() % 5) + 1;
+  enemy->defense = (rand() % 4) + 1;
   enemy->dead    = 0;
 
   return enemy;

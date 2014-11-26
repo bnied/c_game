@@ -16,9 +16,9 @@ struct Player *Player_create(char *name) {
   assert(player != NULL);
 
   player->name    = name;
-  player->health  = 100;
-  player->attack  = rand() % 5;
-  player->defense = rand() % 4;
+  player->health  = ((rand() % 25) * 4) + 1;
+  player->attack  = (rand() % 5) + 1;
+  player->defense = (rand() % 4) + 1;
   player->dead    = 0;
 
   return player;

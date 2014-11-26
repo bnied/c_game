@@ -24,6 +24,9 @@ void clear_screen() {
 }
 
 int main(int argc, char *argv[]) {
+  // Seed our RNG
+  srand(time(NULL));
+
   // Setup; get the player's name and generate our characters
   char name_input[NAME_LENGTH];
   printf("Hello and welcome! What is your name?\n");
@@ -51,9 +54,6 @@ int main(int argc, char *argv[]) {
   
   // Endless loop; keep going until one of the characters is dead.
   while (1) {
-    // Seed our RNG
-    srand(time(NULL));
-
     // Player's turn
     int player_critical_roll = rand() % 3;
     int player_attack_roll = rand() % 3;
