@@ -68,14 +68,9 @@ void enemy_damage(struct Enemy *enemy, int damage, int die_roll) {
   } else {
     printf("Your attack causes no damage.\n");
   }
-}
 
-// Check if our enemy is dead
-int check_enemy_death(struct Enemy *enemy){
+  // Check if our enemy is dead
   if(enemy->health <= 0) {
     enemy->dead = 1;
-    return 1;
-  } else {
-    return 0;
   }
 }

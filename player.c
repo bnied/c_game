@@ -37,7 +37,6 @@ void Player_print(struct Player *player) {
   printf("DEF: %d\n\n", player->defense);
 }
 
-
 /* The die roll determines what kind of damage we take:
  * - Normal (0): Health - (ATK - DEF)
  * - Critical (1): (Health - (ATK - DEF)) * 2
@@ -70,14 +69,10 @@ void player_damage(struct Player *player, int damage, int die_roll) {
   } else {
     printf("The enemy's attack causes no damage.\n");
   }
-}
 
-// Check if our player is dead
-int check_player_death(struct Player *player) {
+  // Check if the player is dead
   if(player->health <= 0) {
     player->dead = 1;
-    return 1;
-  } else {
-    return 0;
   }
 }
+

@@ -23,6 +23,10 @@ void clear_screen() {
   }
 }
 
+int roll_dice() {
+  return rand() % 3;
+}
+
 int main(int argc, char *argv[]) {
   // Setup; get the player's name and generate our characters
   char name_input[NAME_LENGTH];
@@ -33,16 +37,16 @@ int main(int argc, char *argv[]) {
 
   // Seed our RNG
   srand(time(NULL));
-  
+
   // DEBUG
-  printf("Time: %lu\n", time(NULL));
-  printf("Player's Memory Location: %p.\n", player);
-  printf("Enemy's Memory Location: %p.\n", enemy);
-  sleep(5);
+  //printf("Time: %lu\n", time(NULL));
+  //printf("Player's Memory Location: %p.\n", player);
+  //printf("Enemy's Memory Location: %p.\n", enemy);
+  //sleep(5);
 
   // Clear the screen and show the player/enemy stats
   clear_screen();
-  
+
   // Start the game. The introduction...
   printf("An enemy approaches...\n");
   printf("Your enemy's statistics:\n");
@@ -53,14 +57,13 @@ int main(int argc, char *argv[]) {
 
   // Now clear the screen and begin the game proper
   clear_screen();
-  
+
   // Endless loop; keep going until one of the characters is dead.
   while (1) {
     // Player's turn
-    int player_critical_roll = rand() % 3;
-    int player_attack_roll = rand() % 3;
 
-    switch(player_attack_roll) {
+    // Roll to see what our ATK power is
+    switch(roll_dice()) {
       default:
         player->attack = 3;
         break;
@@ -73,25 +76,23 @@ int main(int argc, char *argv[]) {
         player->attack = 10;
         break;
     }
+    
+    // The second roll is for crit
+    enemy_damage(enemy, player->attack, roll_dice());
 
-    enemy_damage(enemy, player->attack, player_critical_roll);
-
-    // If the enemy is dead, break the loop and end the game.
-    int dead_enemy = check_enemy_death(enemy);
-    if (dead_enemy) {
+    // If our enemy is dead, break the loop and end the game
+    if (enemy->dead) {
       printf("You killed the enemy! You win, %s.", player->name);
       break;
     }
     printf("The enemy's health is now %d.\n\n", enemy->health);
 
     // Give the player a chance to read up.
-    sleep(1);
+    sleep(2);
 
-    // Enemy's turn. Two rolls: one for crit and one for attack damage.
-    int enemy_critical_roll = rand() % 3;
-    int enemy_attack_roll = rand() % 3;
-
-    switch(enemy_attack_roll) {
+    // Enemy's turn
+    // Roll to see what our enemy's ATK power is
+    switch(roll_dice()) {
       default:
         enemy->attack = 3;
         break;
@@ -104,14 +105,13 @@ int main(int argc, char *argv[]) {
         enemy->attack = 10;
         break;
     }
-
-    player_damage(player, enemy->attack, enemy_critical_roll);
     
+    // The second roll is for crit
+    player_damage(player, enemy->attack, roll_dice());
+
     // If the enemy killed the player, break the loop and quit the game.
-    int dead_player = check_player_death(player);
-    if (dead_player) {
+    if (player->dead) {
       printf("The enemy has killed you! You lose, %s.", player->name);
-      sleep(2);
       break;
     }
     printf("Your health is now %d.\n\n", player->health);
