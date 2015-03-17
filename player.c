@@ -13,13 +13,10 @@ struct Player *Player_create(char *name) {
   struct Player *player = malloc(sizeof(struct Player));
   assert(player != NULL);
 
-  // Seed the RNG
-  srand((int)player);
-
   player->name    = name;
-  player->health  = ((rand() % 25) * 4) + 1;
-  player->attack  = (rand() % 5) + 1;
-  player->defense = (rand() % 4) + 1;
+  player->health  = 100;
+  player->attack  = 5;
+  player->defense = 3;
   player->dead    = 0;
 
   return player;
@@ -61,7 +58,7 @@ void player_damage(struct Player *player, int damage, int die_roll) {
       break;
   }
 
-  int final_damage = (int)(damage * multiplier) - player->defense;
+  int final_damage = (int)(damage * multiplier) - (int)(player->defense / multiplier);
 
   if (final_damage > 0) {
     printf("The enemy attacks for %d damage!\n", final_damage);

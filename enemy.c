@@ -6,19 +6,17 @@
 #include <time.h>
 #include <unistd.h>
 #include "enemy.h"
+#include "player.h"
 
 struct Enemy *Enemy_create() {
 
   struct Enemy *enemy = malloc(sizeof(struct Enemy));
   assert(enemy != NULL);
 
-  // Seed the RNG
-  srand((int)enemy);
-
   enemy->name    = "The Bad Guy";
-  enemy->health  = ((rand() % 25) * 4) + 1;
-  enemy->attack  = (rand() % 5) + 1;
-  enemy->defense = (rand() % 4) + 1;
+  enemy->health  = 100;
+  enemy->attack  = 5;
+  enemy->defense = 3;
   enemy->dead    = 0;
 
   return enemy;
@@ -60,7 +58,7 @@ void enemy_damage(struct Enemy *enemy, int damage, int die_roll) {
       break;
   }
 
-  int final_damage = (int)(damage * multiplier) - enemy->defense;
+  int final_damage = (int)(damage * multiplier) - (int)(enemy->defense / multiplier);
 
   if (final_damage > 0) {
     printf("You attack for %d damage!\n", final_damage);

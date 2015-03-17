@@ -28,6 +28,7 @@ int roll_dice() {
 }
 
 int main(int argc, char *argv[]) {
+
   // Setup; get the player's name and generate our characters
   char name_input[NAME_LENGTH];
   printf("Hello and welcome! What is your name?\n");
@@ -37,12 +38,6 @@ int main(int argc, char *argv[]) {
 
   // Seed our RNG
   srand(time(NULL));
-
-  // DEBUG
-  //printf("Time: %lu\n", time(NULL));
-  //printf("Player's Memory Location: %p.\n", player);
-  //printf("Enemy's Memory Location: %p.\n", enemy);
-  //sleep(5);
 
   // Clear the screen and show the player/enemy stats
   clear_screen();
@@ -61,23 +56,7 @@ int main(int argc, char *argv[]) {
   // Endless loop; keep going until one of the characters is dead.
   while (1) {
     // Player's turn
-
-    // Roll to see what our ATK power is
-    switch(roll_dice()) {
-      default:
-        player->attack = 3;
-        break;
-
-      case 2:
-        player->attack = 5;
-        break;
-
-      case 3:
-        player->attack = 10;
-        break;
-    }
-    
-    // The second roll is for crit
+    // The roll determines crit
     enemy_damage(enemy, player->attack, roll_dice());
 
     // If our enemy is dead, break the loop and end the game
@@ -91,22 +70,8 @@ int main(int argc, char *argv[]) {
     sleep(2);
 
     // Enemy's turn
-    // Roll to see what our enemy's ATK power is
-    switch(roll_dice()) {
-      default:
-        enemy->attack = 3;
-        break;
-
-      case 1:
-        enemy->attack = 5;
-        break;
-
-      case 2:
-        enemy->attack = 10;
-        break;
-    }
     
-    // The second roll is for crit
+    // The roll determines crit
     player_damage(player, enemy->attack, roll_dice());
 
     // If the enemy killed the player, break the loop and quit the game.
@@ -117,9 +82,7 @@ int main(int argc, char *argv[]) {
     printf("Your health is now %d.\n\n", player->health);
 
     // Give the player a chance to read up.
-    sleep(1);
-
-    //clear_screen();
+    sleep(2);
   }
 
   Player_destroy(player);
