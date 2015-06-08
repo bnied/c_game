@@ -23,6 +23,7 @@ void clear_screen() {
   }
 }
 
+// Emulate a 3-sided die
 int roll_dice() {
   return rand() % 3;
 }
@@ -70,7 +71,7 @@ int main(int argc, char *argv[]) {
     sleep(2);
 
     // Enemy's turn
-    
+
     // The roll determines crit
     player_damage(player, enemy->attack, roll_dice());
 
